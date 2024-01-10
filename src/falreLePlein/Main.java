@@ -20,6 +20,8 @@ public class Main {
 				
 		System.out.println("Apres Faire le plein \n \t Contenance " +voiture.contenanceReservoir()+" "
 						+ " Contenu " +voiture.contenuReservoir());
+	
+		Db.getConnection();
 	}
 
 }
