@@ -14,6 +14,7 @@ public class User {
 		this.email = email;
 		this.pwd = pwd;
 	}
+
 	public String getPrenom() {
 		return prenom;
 	}

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -78,21 +80,46 @@ public class Register extends JPanel {
 				String pwdSaisi = String.valueOf(pwd.getPassword());
 				
 				UserDao userDao = new UserDao();
+				
+				
 				User user = new User(prenomSaisi,nomSaisi,email,pwdSaisi);
 				System.out.println(email);
-				if (email == null || email == "") {
-					JOptionPane.showMessageDialog(null,"Vous devez saisir un mail","OUPS", JOptionPane.ERROR_MESSAGE);
-
-				} else {
-					if (userDao.create(user)) {
-						System.out.println("Bravo");
-						
-						JOptionPane.showMessageDialog(null,"Compte créé","Youpii", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						System.err.println("OUPS");
-						JOptionPane.showMessageDialog(null,"Compte pas créé","OUPS", JOptionPane.ERROR_MESSAGE);
-						
+				//if (email == null || email == "") {
+				String regex = "^[A-Za-z0-9][A-Za-z0-9.-]+[A-Za-z0-9][@][A-Za-z0-9][A-Za-z0-9.-]+[A-Za-z0-9][.][A-Za-z0-9]{2,3}$";
+				Pattern patternAVerif = Pattern.compile(regex);
+				
+				/*
+				 * Check si le regex(Ligne 148) a le mm FORMAT que le mail saisi par le user 
+				 * Exmple: format@mail.com --- chaine@chaine.com/fr
+				 */
+				Matcher matcher = patternAVerif.matcher(email);
+				
+				/*
+				 * Check le format du mail saisi 
+				 */
+				// Si le format match avec chaine@chaine.fr/com
+				if (matcher.matches()) {
+				//} else {
+					/*
+					 * Verification si le mail exite deja
+					 */
+					if (userDao.isExist(email)) {
+						JOptionPane.showMessageDialog(null,"Oups ! \n Mail existe deja","Inscription",JOptionPane.ERROR_MESSAGE);	
+					} 
+					
+					else {
+						/*
+						 * Si le mail n'existe pas dans la BDD
+						 */
+						if (userDao.create(user)) {
+							JOptionPane.showMessageDialog(null,"Bravo " +user.getPrenom()+ " \n"
+									+ "ton compte a été bien créé !" ,"Inscription",JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(null,"Oups ! \n Compte pas créer","Inscription",JOptionPane.ERROR_MESSAGE);
+						}
 					}
+				}else {
+					JOptionPane.showMessageDialog(null,"Oups ! \n Format non valide","Inscription",JOptionPane.ERROR_MESSAGE);
 				}
 				
 			}
